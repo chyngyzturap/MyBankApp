@@ -37,7 +37,18 @@ class MainActivity : AppCompatActivity(), AccountContract.View {
         // Инициализация презентера
         presenter = AccountPresenter(this)
 
-        adapter = AccountAdapter()
+        adapter = AccountAdapter(
+            onDelete = { id ->
+                presenter.deleteAccount(id)
+            },
+            onEdit = { account ->
+                //show edit dialog
+                showEditDialog(account)
+            },
+            onStatusToggle = { id, isChecked ->
+                presenter.updateAccountStatus(id, isChecked)
+            }
+        )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
@@ -86,6 +97,37 @@ class MainActivity : AppCompatActivity(), AccountContract.View {
                 presenter.addAccount(name, balance, currency)
             }
             .setNegativeButton("Отмена", null) // Кнопка отмены
+            .show()
+    }
+
+    private fun showEditDialog(account: Account) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_account, null)
+        val nameInput = dialogView.findViewById<EditText>(R.id.etName)
+        val balanceInput = dialogView.findViewById<EditText>(R.id.etBalance)
+        val currencyInput = dialogView.findViewById<EditText>(R.id.etCurrency)
+
+        // Заполняем текущими данными
+        nameInput.setText(account.name)
+        balanceInput.setText(account.balance)
+        currencyInput.setText(account.currency)
+
+        AlertDialog.Builder(this)
+            .setTitle("Редактировать счёт")
+            .setView(dialogView)
+            .setPositiveButton("Обновить") { _, _ ->
+                val name = nameInput.text.toString()
+                val balance = balanceInput.text.toString()
+                val currency = currencyInput.text.toString()
+
+                val updated = account.copy(
+                    name = name,
+                    balance = balance,
+                    currency = currency
+                )
+
+                presenter.updateAccountFully(updated.id!!, updated)
+            }
+            .setNegativeButton("Отмена", null)
             .show()
     }
 
