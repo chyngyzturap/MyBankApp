@@ -71,8 +71,8 @@ class AccountViewModel: ViewModel(){
         })
     }
 
-    fun deleteAccount(accountId: String) {
-        ApiClient.accountApi.deleteAccount(accountId).enqueue(object: Callback<Unit> {
+    fun deleteAccount(id: String) {
+        ApiClient.accountApi.deleteAccount(id).enqueue(object: Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 if (response.isSuccessful) {
                     _successMessage.value = "Удалено"
