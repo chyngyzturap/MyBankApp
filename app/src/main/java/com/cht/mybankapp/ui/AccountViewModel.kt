@@ -112,6 +112,8 @@ class AccountViewModel @Inject constructor(
         })
     }
 
+    // функция для обновления статуса счета через PATCH, передается accountId и isActive, переопределяем onResponse
+    // и onFailure и обрабатываем ответ через LiveData
     fun updateAccountStatus(accountId: String, isActive: Boolean) {
         accountApi.patchAccountStatus(accountId, PatchAccountStatusDTO(isActive)).enqueue(object: Callback<Account>{
             override fun onResponse(call: Call<Account>, response: Response<Account>) {
