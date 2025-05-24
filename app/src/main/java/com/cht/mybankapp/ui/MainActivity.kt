@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.cht.mybankapp.R
 import com.cht.mybankapp.data.model.Account
 import com.cht.mybankapp.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(){
 
     private var _binding: ActivityMainBinding? = null
