@@ -14,11 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    // успешный ответ с бэкенда: 200, 201, 202, 203, 204
-    // обработанная ошибка на бэкенде: 400..
-    // необработанная ошибка на бэкенде: 500...
-
-    // Логирование HTTP-запросов и ответов для отладки
     @Provides
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
@@ -26,7 +21,6 @@ object NetworkModule {
         }
     }
 
-    // HTTP-клиент с подключенным логированием
     @Provides
     fun provideHttpClient(logging: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
@@ -34,7 +28,6 @@ object NetworkModule {
             .build()
     }
 
-    // Инициализация Retrofit с базовым URL и конвертером JSON
     @Provides
     fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
@@ -44,7 +37,6 @@ object NetworkModule {
             .build()
     }
 
-    // Экземпляр API для работы с счетами
     @Provides
     fun provideAccountApi(retrofit: Retrofit): AccountApi {
         return retrofit.create(AccountApi::class.java)

@@ -11,17 +11,13 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
-// Интерфейс для работы с API счетов
 interface AccountApi {
 
-    // Метод для получения списка счетов (HTTP GET запрос)
     @GET("accounts")
     fun getAccounts(): Call<List<Account>>
 
-    // Метод для создания нового счета (HTTP POST запрос)
     @POST("accounts")
     fun createAccount(@Body account: Account): Call<Account>
-
 
     @DELETE("accounts/{id}")
     fun deleteAccount(@Path ("id") id: String): Call<Unit>
