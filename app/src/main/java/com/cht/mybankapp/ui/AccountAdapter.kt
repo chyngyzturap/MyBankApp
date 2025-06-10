@@ -1,4 +1,4 @@
-package com.cht.mybankapp.ui.accounts
+package com.cht.mybankapp.ui
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,16 +10,18 @@ import com.cht.mybankapp.R
 import com.cht.mybankapp.data.model.Account
 
 class AccountAdapter (
-    val onStatusToggle: (String, Boolean) -> Unit,
-    val onItemClick: (String) -> Unit
+    val onDelete: (String) -> Unit,
+    val onEdit: (Account) -> Unit,
+    val onStatusToggle: (String, Boolean) -> Unit
 ) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
 
     private val items = mutableListOf<Account>()
 
+    // Метод для обновления списка данных в адаптере
     fun submitList(data: List<Account>) {
-        items.clear()
-        items.addAll(data)
-        notifyDataSetChanged()
+        items.clear() // Очищаем текущий список
+        items.addAll(data) // Добавляем новые данные
+        notifyDataSetChanged() // Уведомляем RecyclerView об изменениях
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountViewHolder {
@@ -39,6 +41,16 @@ class AccountAdapter (
             findViewById<TextView>(R.id.tvName).text = account.name
             findViewById<TextView>(R.id.tvBalance).text = "${account.balance} ${account.currency}"
 
+            val btnDelete = findViewById<Button>(R.id.btnDelete)
+            btnDelete.setOnClickListener {
+                account.id?.let { onDelete(it) }
+            }
+
+            val btnEdit = findViewById<Button>(R.id.btnEdit)
+            btnEdit.setOnClickListener {
+                onEdit(account)
+            }
+
             val switchActive = findViewById<SwitchCompat>(R.id.switchActive)
             switchActive.setOnCheckedChangeListener(null)
             switchActive.isChecked = account.isActive
@@ -46,7 +58,7 @@ class AccountAdapter (
                 account.id?.let { onStatusToggle(it, isChecked) }
             }
 
-            setOnClickListener { account.id?.let { onItemClick(it) } }
+
 
         }
     }

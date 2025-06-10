@@ -1,4 +1,4 @@
-package com.cht.mybankapp.ui.accounts
+package com.cht.mybankapp.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,36 +26,51 @@ class AccountViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
+    // Загрузка списка счетов
     fun loadAccounts() {
+        // Выполняем асинхронный запрос к API для получения списка счетов
         accountApi.getAccounts().enqueue(object : Callback<List<Account>> {
+            // Обработка успешного ответа
             override fun onResponse(call: Call<List<Account>>, response: Response<List<Account>>) {
                 if (response.isSuccessful) {
                     _accounts.value = response.body() ?: emptyList()
                 } else {
+                    // Показываем сообщение об ошибке, если ответ не успешен
                     _errorMessage.value = "Ошибка загрузки"
                 }
             }
 
+            // Обработка ошибки сети или других исключений
             override fun onFailure(call: Call<List<Account>>, t: Throwable) {
+                // Показываем сообщение об ошибке сети
                 _errorMessage.value = "Ошибка сети: ${t.message}"
             }
         })
     }
 
+    // Добавление нового счета
     fun addAccount(name: String, balance: String, currency: String) {
+        // Создаем объект Account с переданными данными
         val account = Account(name = name, balance = balance, currency = currency, isActive = true)
 
+        // Выполняем асинхронный запрос к API для создания нового счета
         accountApi.createAccount(account).enqueue(object : Callback<Account> {
+            // Обработка успешного ответа
             override fun onResponse(call: Call<Account>, response: Response<Account>) {
                 if (response.isSuccessful) {
+                    // Показываем сообщение об успешном добавлении счета
                     _successMessage.value = "Аккаунт добавлен"
+                    // Обновляем список счетов после добавления
                     loadAccounts()
                 } else {
+                    // Показываем сообщение об ошибке, если ответ не успешен
                     _errorMessage.value = "Ошибка добавления"
                 }
             }
 
+            // Обработка ошибки сети или других исключений
             override fun onFailure(call: Call<Account>, t: Throwable) {
+                // Показываем сообщение об ошибке сети
                 _errorMessage.value = "Ошибка сети: ${t.message}"
             }
         })
@@ -96,6 +111,9 @@ class AccountViewModel @Inject constructor(
 
         })
     }
+
+    // функция для обновления статуса счета через PATCH, передается accountId и isActive, переопределяем onResponse
+    // и onFailure и обрабатываем ответ через LiveData
     fun updateAccountStatus(accountId: String, isActive: Boolean) {
         accountApi.patchAccountStatus(accountId, PatchAccountStatusDTO(isActive)).enqueue(object: Callback<Account>{
             override fun onResponse(call: Call<Account>, response: Response<Account>) {
