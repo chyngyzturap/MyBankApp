@@ -31,6 +31,9 @@ class AccountsActivity : AppCompatActivity(){
         setContentView(view)
 
         adapter = AccountAdapter(
+            onDelete = { id ->
+                viewModel.deleteAccount(id)
+            },
             onStatusToggle = { id, isChecked ->
                 viewModel.updateAccountStatus(id, isChecked)
             },
